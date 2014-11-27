@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My simple Blog...</title>
+        <link href="css/style.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="content">
+                <div id="header">
+                    <div id="logo">
+                        <h1>My simple blog...</h1>
+                        <h4>...which is completely js and markdown powered</h4>
+                    </div>
+                </div>
+                <div id="contentarea">
+                    <div id="markdown-content"></div>
+                </div>
+            </div>
+        </div>
+        <script src="js/marked.js" "text/javascript"></script>
+        <script src="js/jquery-2.1.1.min.js" "text/javascript"></script>
+        <script type="text/javascript">
+
+            
+            //from: http://stackoverflow.com/questions/5448545/how-to-retrieve-get-parameters-from-javascript
+            function getSearchParameters() {
+                var prmstr = window.location.search.substr(1);
+			    return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+    		}
+    
+    		function transformToAssocArray(prmstr) {
+    			var params = {};
+    			var prmarr = prmstr.split("&");
+    			for ( var i = 0; i < prmarr.length; i++) {
+        			var tmparr = prmarr[i].split("=");
+    	    		params[tmparr[0]] = tmparr[1];
+			    }
+    			return params;
+            }
+
+            function writeMarkDownToHTML(data) {
+                marked.setOptions({
+                    renderer : new marked.Renderer(),
+                    gfm: true,
+                    tables: true,
+                    breaks: true,
+                    pedantic: false,
+                    sanitize: false, //needs to be false to support html in .md
+                    smartLists: true,
+                    smartypants: false
+                    });
+                $('#markdown-content').html(marked(data));
+            }
+
+            $(document).ready(function() { 
+			    var params = getSearchParameters();
+    			if(params.site != null) {
+    				$.get("markdown-content/".concat(params.site), writeMarkDownToHTML);
+                } else {
+                    $.get("markdown-content/index.md", writeMarkDownToHTML);
+                }
+            });
+        </script>
+    </body>
+</html>
